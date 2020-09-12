@@ -1,0 +1,5 @@
+{
+  "scripts": {
+    "minify": "terser --module --no-rename -m -c -o utilele.min.js utilele.js"
+  }
+}
