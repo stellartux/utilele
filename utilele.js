@@ -1,7 +1,7 @@
 /**
  * querySelector shorthand
  * @param {string} selector
- * @param {Document | Element} [parent = document]
+ * @param {any} [parent = document]
  */
 export function $(selector, parent = document) {
   return parent.querySelector(selector)
@@ -10,7 +10,7 @@ export function $(selector, parent = document) {
 /**
  * querySelectorAll shorthand
  * @param {string} selector
- * @param {Document | Element} [parent = document]
+ * @param {any} [parent = document]
  */
 export function $$(selector, parent = document) {
   return Array.from(parent.querySelectorAll(selector))
@@ -94,7 +94,7 @@ export function withinRange(value, min, max, step = 0) {
   return (
     value >= min &&
     value <= max &&
-    (!step || Number.isInteger((value - min) / step))
+    (step === 0 || Number.isInteger((value - min) / step))
   )
 }
 
