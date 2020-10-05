@@ -69,6 +69,8 @@ Deno.test({
     assertEquals(Utilele.wrap(10, 2, 4), 2)
     assertEquals(Utilele.wrap(11, 3, 6), 5)
     assertEquals(Utilele.wrap(2, 3, 6), 5)
+    assertEquals(Utilele.wrap(0, 0, 0), 0)
+    assertEquals(Utilele.wrap(4, 10, 10), 10)
   },
 })
 Deno.test({

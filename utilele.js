@@ -61,7 +61,7 @@ export function clamp(value, min, max) {
  * @param {number} max
  */
 export function wrap(value, min, max) {
-  return ((value + max) % (max - min)) + min
+  return max === min ? min : ((value + max) % (max - min)) + min
 }
 
 /**
