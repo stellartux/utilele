@@ -156,3 +156,13 @@ export function debounce(func, time = 100) {
     }, time)
   }
 }
+
+/**
+ * Returns a random integer within a range.
+ * @param {number} min the minimum value, inclusive
+ * @param {number} max the maximum value, inclusive
+ * @returns {number} a random integer
+ */
+export function randInt(min, max) {
+  return Math.round(Math.random() * (max - min)) + min
+}
