@@ -166,3 +166,21 @@ export function debounce(func, time = 100) {
 export function randInt(min, max) {
   return Math.round(Math.random() * (max - min)) + min
 }
+
+/**
+ * Creates a memoized version of a single parameter function
+ * @param {(arg0: string | number | symbol) => any} fn
+ */
+export function memoize(fn) {
+  const cache = {}
+  /**
+   * @param {string | number | symbol} value
+   */
+  function memoized(value) {
+    if (!cache.hasOwnProperty(value)) {
+      cache[value] = fn(value)
+    }
+    return cache[value]
+  }
+  return memoized
+}
