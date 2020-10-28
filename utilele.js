@@ -184,3 +184,17 @@ export function memoize(fn) {
   }
   return memoized
 }
+
+/**
+ * An enumerator, but with symbols instead of numbers. 
+ */
+export class Esym {
+  /**
+   * @param {(string | number)[]} values
+   */
+  constructor(...values) {
+    for (const value of values) {
+      this[value] = Symbol(value)
+    }
+  }
+}
