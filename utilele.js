@@ -1,7 +1,7 @@
 /**
  * querySelector shorthand
  * @param {string} selector
- * @param {any} [parent = document]
+ * @param {ParentNode} [parent = document]
  */
 export function $(selector, parent = document) {
   return parent.querySelector(selector)
@@ -10,7 +10,7 @@ export function $(selector, parent = document) {
 /**
  * querySelectorAll shorthand
  * @param {string} selector
- * @param {any} [parent = document]
+ * @param {ParentNode} [parent = document]
  */
 export function $$(selector, parent = document) {
   return Array.from(parent.querySelectorAll(selector))
