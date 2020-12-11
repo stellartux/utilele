@@ -186,7 +186,7 @@ export function memoize(fn) {
 }
 
 /**
- * An enumerator, but with symbols instead of numbers. 
+ * An enumerator, but with symbols instead of numbers.
  */
 export class Esym {
   /**
@@ -197,4 +197,25 @@ export class Esym {
       this[value] = Symbol(value)
     }
   }
+}
+
+/**
+ * If `predicate` is a function, counts the number of items in `iterable` which
+ * return `true` when `predicate` is called with them; otherwise counts how
+ * many items are strictly equal to the `predicate` value.
+ * @param {((value: any) => boolean) | any} predicate
+ * @param {Iterable} iterable
+ * @returns {Number} count of values
+ */
+export function count(predicate, iterable) {
+  const pred = (typeof predicate === 'function') ? predicate : (value) => value === predicate
+
+  let total = 0
+
+  for (const v of iterable) {
+    if (pred(v)) {
+      total++
+    }
+  }
+  return total
 }

@@ -1,4 +1,4 @@
-import { assertEquals } from 'https://deno.land/std@0.68.0/testing/asserts.ts' 
+import { assertEquals } from 'https://deno.land/std@0.68.0/testing/asserts.ts'
 import * as Utilele from './utilele.js'
 
 Deno.test({
@@ -87,6 +87,14 @@ Deno.test({
       [3, 6, 9]
     ])
   },
+})
+Deno.test({
+  name: 'Utilele.count()',
+  fn: function() {
+    assertEquals(Utilele.count(x => x === 1, [1,2,3,1]), 2)
+    assertEquals(Utilele.count(1, [1,2,3,1]), 2)
+    assertEquals(Utilele.count('t', 'testing'), 2)
+  }
 })
 
 //@ts-ignore
