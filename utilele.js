@@ -32,6 +32,12 @@ export function removeChildren(element) {
  * @param {any} [currentValue = 0]
  */
 export function sum(previousValue = 0, currentValue = 0) {
+  if (Array.isArray(previousValue)) {
+    previousValue = previousValue.reduce(sum)
+  }
+  if (Array.isArray(currentValue)) {
+    currentValue = currentValue.reduce(sum)
+  }
   return Number(previousValue) + Number(currentValue)
 }
 
@@ -41,6 +47,12 @@ export function sum(previousValue = 0, currentValue = 0) {
  * @param {number} [currentValue = 1]
  */
 export function prod(previousValue = 1, currentValue = 1) {
+  if (Array.isArray(previousValue)) {
+    previousValue = previousValue.reduce(prod)
+  }
+  if (Array.isArray(currentValue)) {
+    currentValue = currentValue.reduce(prod)
+  }
   return previousValue * currentValue
 }
 
@@ -99,13 +111,33 @@ export function withinRange(value, min, max, step = 0) {
 }
 
 /**
- * array.filter(unique) filters duplicates from the array
+ * `unique(array)` or `array.filter(unique)` filters duplicates from the array.
  * @param {any} value
- * @param {number} index
- * @param {any[]} array
+ * @param {number} [index]
+ * @param {any[]} [array]
  */
 export function unique(value, index, array) {
-  return index === array.indexOf(value)
+  if (array) {
+    return index === array.indexOf(value)
+  } else if (Array.isArray(value)) {
+    return value.filter(unique)
+  } else {
+    return Array.from(value).filter(unique)
+  }
+}
+
+/**
+ * Filter unique values from a generator function.
+ * @param {any} generator
+ */
+export function* uniqueLazy(generator) {
+  const seen = new Set()
+  for (const value of generator) {
+    if (!seen.has(value)) {
+      seen.add(value)
+      yield value
+    }
+  }
 }
 
 /**
@@ -118,11 +150,15 @@ export function isByte(value) {
 
 /**
  * @generator
+ * Generates digits from least significant to most significant.
  * @param {number} number
  * @param {number} [base = 10] the base of the number to be
  */
 export function* digits(number, base = 10) {
-  yield* number.toString(base)
+  do {
+    yield number % base
+    number = Math.floor(number / base)
+  } while (number > 0)
 }
 
 /**
@@ -203,19 +239,74 @@ export class Esym {
  * If `predicate` is a function, counts the number of items in `iterable` which
  * return `true` when `predicate` is called with them; otherwise counts how
  * many items are strictly equal to the `predicate` value.
- * @param {((value: any) => boolean) | any} predicate
- * @param {Iterable} iterable
- * @returns {Number} count of values
+ * If only `iterable` is passed, counts truthy values in the iterable.
+ * @param {((value: any) => boolean) | any} [predicate] or iterable
+ * @param {Iterable} [iterable]
+ * @returns {number} count of values
  */
 export function count(predicate, iterable) {
-  const pred = (typeof predicate === 'function') ? predicate : (value) => value === predicate
+  if (!iterable) {
+    iterable = predicate
+    predicate = Boolean
+  } else if (typeof predicate !== 'function') {
+    const pValue = predicate
+    predicate = (/** @type {any} */ value) => value === pValue
+  }
 
   let total = 0
 
-  for (const v of iterable) {
-    if (pred(v)) {
+  for (const value of iterable) {
+    if (predicate(value)) {
       total++
     }
   }
   return total
+}
+
+/**
+ * Count forever, from `start`, increasing by `step` each iteration.
+ * @param {number | bigint} [start = 0] Defaults to `0`
+ * @param {number | bigint} [step = 1] Defaults to `1`
+ */
+export function* countFrom(start = 0, step = 1) {
+  if (typeof start === 'bigint') {
+    step = BigInt(step)
+  } else if (typeof start === 'number') {
+    step = Number(step)
+  } else {
+    throw new TypeError('Expected a number or a bigint, got a ' + typeof start)
+  }
+  while (true) {
+    yield start
+    // @ts-ignore
+    start += step
+  }
+}
+
+/**
+ * Takes no more than `amount` values from the iterable.
+ * @param {IterableIterator<any>} iterable
+ * @param {number} amount
+ */
+export function* take(iterable, amount) {
+  for (const value of iterable) {
+    if (amount-- === 0) return
+    yield value 
+  }
+}
+
+/**
+ * @param {(arg0: any, arg1: any) => any} reducer
+ * @param {IterableIterator<any>} iterable
+ * @param {any} init
+ * @yields each cumulatively reduced value
+ */
+export function* cumulative(reducer, iterable, init) {
+  if (init === undefined) {
+    init = Array.isArray(iterable) ? iterable.shift() : iterable.next().value
+    yield init
+  }
+  for (const value of iterable) {
+    yield (init = reducer(init, value))
+  }
 }
